@@ -50,7 +50,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     //    self.view.backgroundColor=Main_COLOR;
-    UIImageView *imageViewBG =[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"background_login"]];
+    UIImageView *imageViewBG =[[UIImageView alloc] initWithImage:[UIImage imageNamed:@""]];
     [self.view addSubview:imageViewBG];
     
     [imageViewBG mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -87,8 +87,8 @@
     _scrollView.contentSize=CGSizeMake(SCREEN_W, SCREEN_H);
     [self.view addSubview:_scrollView];
     
-    [self addPhoneField:_userNameField ToView:_scrollView withTitle:@"请输入手机号码" andTitleYoffset:230 isPassword:NO];
-    [self addTextField:_passwordField ToView:_scrollView withTitle:@"请输入登录密码" andTitleYoffset:(230+46) isPassword:YES];
+    [self addPhoneField:_userNameField ToView:_scrollView withTitle:@"请输入手机号码" andTitleYoffset:MATCHSIZE(509) isPassword:NO];
+    [self addTextField:_passwordField ToView:_scrollView withTitle:@"请输入登录密码" andTitleYoffset:(MATCHSIZE(509)+46) isPassword:YES];
     _userNameField.keyboardType=UIKeyboardTypeDecimalPad;
     
     [self AddImageView];
@@ -105,15 +105,15 @@
 -(void)addForgetpassword{
     UIButton *forgetpassword=[UIButton buttonWithType:UIButtonTypeCustom];
     forgetpassword.titleLabel.font=[UIFont systemFontOfSize:MATCHSIZE(26)];
-    [forgetpassword setTitleColor:UIColorFromRGB(@"#3ab48f") forState:UIControlStateNormal];
-    [forgetpassword setTitle:@"登录遇到问题？" forState:UIControlStateNormal];
+    [forgetpassword setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+    [forgetpassword setTitle:@"忘记密码？点我" forState:UIControlStateNormal];
     [forgetpassword addTarget:self action:@selector(forgetBtnPressed) forControlEvents:UIControlEventTouchUpInside];
     [_scrollView addSubview:forgetpassword];
     forgetpassword.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
     _forgetpassword = forgetpassword;
     [forgetpassword mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.offset(SCREEN_W/2 - MATCHSIZE(490)/2);
-        make.top.equalTo(_passwordField.mas_bottom).offset(MATCHSIZE(20));
+        make.left.offset(MATCHSIZE(84));
+        make.top.equalTo(_userNameField.mas_bottom).offset(MATCHSIZE(50));
         make.height.offset(MATCHSIZE(30));
         make.width.offset(MATCHSIZE(200));
     }];
@@ -122,10 +122,12 @@
 -(void)AddImageView
 {
     UIImageView *loginImage=[[UIImageView alloc]init];
-    loginImage.image=[UIImage imageNamed:@"logo"];
+    loginImage.image=[UIImage imageNamed:@"logo2"];
     //[loginImage sizeToFit];
-    loginImage.size=CGSizeMake(147,102);
-    loginImage.center=CGPointMake(_scrollView.center.x, 130);
+    loginImage.size=CGSizeMake(MATCHSIZE(260),MATCHSIZE(180));
+//    loginImage.center=CGPointMake(_scrollView.center.x,MATCHSIZE(195));
+    loginImage.frame = CGRectMake(self.view.frame.size.width/2 - MATCHSIZE(260)/2, MATCHSIZE(195), MATCHSIZE(260), MATCHSIZE(180));
+    
     [_scrollView addSubview:loginImage];
     
     
@@ -144,7 +146,7 @@
 
 -(void)addPhoneField:(UITextField *)textField ToView:(UIView *)mainView withTitle:(NSString *)title andTitleYoffset:(CGFloat)y_offset isPassword:(BOOL)isPassword{
     //42
-    UIImageView *FieldImageView=[[UIImageView alloc]initWithFrame:CGRectMake(SCREEN_W/2 - MATCHSIZE(490)/2,y_offset+10 , 20, 20)];
+    UIImageView *FieldImageView=[[UIImageView alloc]initWithFrame:CGRectMake(MATCHSIZE(84),y_offset+10 , 20, 20)];
     FieldImageView.backgroundColor=[UIColor clearColor];
     FieldImageView.image=[UIImage imageNamed:@"user"];
     [mainView addSubview:FieldImageView];
@@ -163,18 +165,18 @@
     _userNameField.keyboardType=UIKeyboardTypeDecimalPad;
     _userNameField.contentVerticalAlignment=UIControlContentVerticalAlignmentCenter;
     _userNameField.secureTextEntry=isPassword;
-    _userNameField.frame=CGRectMake(SCREEN_W/2 - MATCHSIZE(490)/2 +20,y_offset ,MATCHSIZE(490)-20, 46);
+    _userNameField.frame=CGRectMake(MATCHSIZE(84),y_offset,[UIScreen mainScreen].bounds.size.width - MATCHSIZE(84)*2, 46);
     [mainView addSubview:_userNameField];
     //SCREEN_W/2 - MATCHSIZE(490)/2,_passwordField.bottom ,MATCHSIZE(490), LINE_HEIGHT
     
-    UIView *lineView=[[UIView alloc]initWithFrame:CGRectMake(SCREEN_W/2 - MATCHSIZE(490)/2,_userNameField.bottom ,MATCHSIZE(490), LINE_HEIGHT)];
+    UIView *lineView=[[UIView alloc]initWithFrame:CGRectMake(MATCHSIZE(84),_userNameField.bottom ,[UIScreen mainScreen].bounds.size.width - MATCHSIZE(84)*2, LINE_HEIGHT)];
     lineView.backgroundColor = UIColorFromRGB(@"#3ab48f");
     [mainView addSubview:lineView];
 }
 
 -(void)addTextField:(UITextField *)textField ToView:(UIView *)mainView withTitle:(NSString *)title andTitleYoffset:(CGFloat)y_offset isPassword:(BOOL)isPassword{
     //42
-    UIImageView *FieldImageView=[[UIImageView alloc]initWithFrame:CGRectMake(SCREEN_W/2 - MATCHSIZE(490)/2,y_offset+MATCHSIZE(50)+12 , 20, 20)];
+    UIImageView *FieldImageView=[[UIImageView alloc]initWithFrame:CGRectMake(MATCHSIZE(84),y_offset+MATCHSIZE(95)+12 , 20, 20)];
     FieldImageView.backgroundColor=[UIColor clearColor];
     FieldImageView.image=[UIImage imageNamed:@"password"];
     [mainView addSubview:FieldImageView];
@@ -194,12 +196,12 @@
     _passwordField.font=[UIFont systemFontOfSize:14];
     _passwordField.contentVerticalAlignment=UIControlContentVerticalAlignmentCenter;
     _passwordField.secureTextEntry=isPassword;
-    _passwordField.frame=CGRectMake(SCREEN_W/2 - MATCHSIZE(490)/2 +20,y_offset+MATCHSIZE(50) ,MATCHSIZE(490)-20, 46);
+    _passwordField.frame=CGRectMake(MATCHSIZE(84),y_offset+MATCHSIZE(95) ,[UIScreen mainScreen].bounds.size.width - MATCHSIZE(84)*2, 46);
     [mainView addSubview:_passwordField];
     
     
     //SCREEN_W/2 - MATCHSIZE(490)/2,_passwordField.bottom ,MATCHSIZE(490), LINE_HEIGHT
-    UIView *lineView=[[UIView alloc]initWithFrame:CGRectMake(SCREEN_W/2 - MATCHSIZE(490)/2,_passwordField.bottom ,MATCHSIZE(490), LINE_HEIGHT)];
+    UIView *lineView=[[UIView alloc]initWithFrame:CGRectMake(MATCHSIZE(84),_passwordField.bottom ,[UIScreen mainScreen].bounds.size.width - MATCHSIZE(84)*2, LINE_HEIGHT)];
     lineView.backgroundColor = UIColorFromRGB(@"#3ab48f");
     [mainView addSubview:lineView];
 
@@ -229,7 +231,7 @@
     
     [loginBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.offset(0);
-        make.top.equalTo(_forgetpassword.mas_bottom).offset(MATCHSIZE(80));
+        make.top.equalTo(_passwordField.mas_bottom).offset(MATCHSIZE(202));
         make.height.offset(MATCHSIZE(70));
         make.width.offset(MATCHSIZE(392));
     }];

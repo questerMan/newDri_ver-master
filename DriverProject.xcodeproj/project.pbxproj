@@ -1538,9 +1538,9 @@
 			children = (
 				B3C6DD4E1BBD505D00249EFA /* CCBWindow.h */,
 				B3C6DD4F1BBD505D00249EFA /* CCBWindow.m */,
+				B34B4F911BAE7CCA002FEED5 /* BaseSetViewController.h */,
 				B3C6DD4B1BBD3ABA00249EFA /* BaseAlertView.h */,
 				B3C6DD4C1BBD3ABA00249EFA /* BaseAlertView.m */,
-				B34B4F911BAE7CCA002FEED5 /* BaseSetViewController.h */,
 				B34B4F921BAE7CCA002FEED5 /* BaseSetViewController.m */,
 				B33FDBD11B9C5B3F00D75343 /* BaseViewController.h */,
 				B33FDBD21B9C5B3F00D75343 /* BaseViewController.m */,
