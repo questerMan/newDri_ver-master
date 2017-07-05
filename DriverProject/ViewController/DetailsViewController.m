@@ -417,6 +417,8 @@
         if(isSucces)
         {
             [self goTo];
+        }else{
+            [self stopCalculatePay];
         }
     }
 }
