@@ -20,7 +20,7 @@
 
 @interface DetailsViewController ()<AMapLocationManagerDelegate,UIAlertViewDelegate,AMapNaviDriveManagerDelegate>
 {
-    
+    NSInteger _flage_NUM;
     NSInteger _flag;
     NSDictionary *_orderDetailDic;
     NSInteger _flagorder;
@@ -157,6 +157,7 @@
 -(void)viewWillAppear:(BOOL)animated {
     [self requestData];
     flages = 2;
+    _flage_NUM = 0;
 }
 
 -(void)viewDidDisappear:(BOOL)animated {
@@ -389,7 +390,6 @@
     [self DismossView];
     
 }
-
 -(void)stopCalculatePay {
     NSArray *array=[DBModel GetDistanceArrayfromType:@"2" withRecentNum:1];
     NSArray *resultArray=[array objectAtIndex:0];
@@ -417,8 +417,12 @@
         if(isSucces)
         {
             [self goTo];
+            _flage_NUM = 0;
         }else{
-            [self stopCalculatePay];
+            _flage_NUM++;
+            if (_flage_NUM <= 50) {
+                [self stopCalculatePay];
+            }
         }
     }
 }
@@ -474,8 +478,7 @@
         NSString *statusString=[NSString stringWithFormat:@"%@",[_orderDetailDic objectForKey:@"status"]];
         NSInteger status=[statusString integerValue];
         if(status == 0) status=1;
-        
-        
+    
         switch (status) {
             case 0:
                 _driverstates = StateNullOrders;
