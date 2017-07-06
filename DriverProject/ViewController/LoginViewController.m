@@ -104,7 +104,7 @@
 
 -(void)addForgetpassword{
     UIButton *forgetpassword=[UIButton buttonWithType:UIButtonTypeCustom];
-    forgetpassword.titleLabel.font=[UIFont systemFontOfSize:MATCHSIZE(26)];
+    forgetpassword.titleLabel.font=[UIFont systemFontOfSize:15];
     [forgetpassword setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
     [forgetpassword setTitle:@"忘记密码？点我" forState:UIControlStateNormal];
     [forgetpassword addTarget:self action:@selector(forgetBtnPressed) forControlEvents:UIControlEventTouchUpInside];
@@ -115,7 +115,7 @@
         make.left.offset(MATCHSIZE(84));
         make.top.equalTo(_userNameField.mas_bottom).offset(MATCHSIZE(50));
         make.height.offset(MATCHSIZE(30));
-        make.width.offset(MATCHSIZE(200));
+        make.width.offset(MATCHSIZE(230));
     }];
 }
 
