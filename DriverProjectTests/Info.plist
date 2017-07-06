@@ -2,12 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UIFileSharingEnabled</key>
+	<false/>
 	<key>NSLocationUsageDescription</key>
-	<string>请允许丽新出行app访问位置，以便更好为您服务</string>
+	<string>请允许丽新出行司机访问位置，以便更好为您服务</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>请允许丽新出行app始终访问位置，以便更好为您服务</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>请允许丽新出行app在使用期间访问位置，以便更好为您服务</string>
+	<string>以便于&quot;丽新出行司机&quot;为您的出行提供给更多服务</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
