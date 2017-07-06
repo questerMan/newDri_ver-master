@@ -1,35 +1,43 @@
 //
-//  OfflineDetailViewController.m
-//  OfficialDemo3D
+//  OfflineDetailVC.m
+//  LiXinDriverTest
 //
-//  Created by xiaoming han on 14-5-5.
-//  Copyright (c) 2014年 songjian. All rights reserved.
+//  Created by lixin on 16/11/10.
+//  Copyright © 2016年 陆遗坤. All rights reserved.
 //
 
-#import "OfflineDetailViewController.h"
+#import "OfflineDetailVC.h"
+#import "MAHeaderViewOffine.h"
+#import <MAMapKit/MAMapKit.h>
 
-#import "MAHeaderView.h"
-
-#define kDefaultSearchkey       @"gz"
+#define kDefaultSearchkey       @"bj"
 #define kSectionHeaderMargin    15.f
 #define kSectionHeaderHeight    22.f
 #define kTableCellHeight        42.f
+#define kTagDownloadButton 0
+#define kTagPauseButton 1
+#define kTagDeleteButton 2
+#define kButtonSize 30.f
+#define kButtonCount 3
+
 
 NSString const *DownloadStageIsRunningKey2 = @"DownloadStageIsRunningKey";
 NSString const *DownloadStageStatusKey2    = @"DownloadStageStatusKey";
 NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
 
-@interface OfflineDetailViewController (SearchCity)
+@interface OfflineDetailVC (SearchCity)
 
 /* Returns a new array consisted of MAOfflineCity object for which match the key. */
 - (NSArray *)citiesFilterWithKey:(NSString *)key;
 
 @end
 
-@interface OfflineDetailViewController ()<UITableViewDataSource, UITableViewDelegate, MAHeaderViewDelegate>
+@interface OfflineDetailVC ()<UITableViewDataSource, UITableViewDelegate, MAHeaderViewOffineDelegate>
 {
     char *_expandedSections;
-    NSInteger _flag;
+    UIImage *_download;
+    UIImage *_pause;
+    UIImage *_delete;
 }
 
 @property (nonatomic, strong) UITableView *tableView;
@@ -40,8 +48,6 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
 @property (nonatomic, strong) NSArray *provinces;
 @property (nonatomic, strong) NSArray *municipalities;
 
-@property (nonatomic, strong) NSArray *CityArray;
-
 @property (nonatomic, strong) NSMutableSet *downloadingItems;
 @property (nonatomic, strong) NSMutableDictionary *downloadStages;
 
@@ -49,7 +55,7 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
 
 @end
 
-@implementation OfflineDetailViewController
+@implementation OfflineDetailVC
 
 @synthesize mapView   = _mapView;
 @synthesize tableView = _tableView;
@@ -62,10 +68,12 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
 @synthesize downloadingItems = _downloadingItems;
 @synthesize downloadStages = _downloadStages;
 
+
 @synthesize needReloadWhenDisappear = _needReloadWhenDisappear;
 
-#pragma mark - Utility
 
+
+#pragma mark - Utility
 - (void)checkNewestVersionAction
 {
     [[MAOfflineMap sharedOfflineMap] checkNewestVersion:^(BOOL hasNewestVersion) {
@@ -87,16 +95,6 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
     }];
 }
 
-- (UIButton *)downloadButton
-{
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 60.f, 40.f)];
-    [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    
-    [button addTarget:self action:@selector(checkButtonTapped:event:) forControlEvents:UIControlEventTouchUpInside];
-    
-    return button;
-}
-
 - (NSIndexPath *)indexPathForSender:(id)sender event:(UIEvent *)event
 {
     UIButton *button = (UIButton*)sender;
@@ -116,7 +114,6 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
 - (NSString *)cellLabelTextForItem:(MAOfflineItem *)item
 {
     NSString *labelText = nil;
-    
     
     if (item.itemStatus == MAOfflineItemStatusInstalled)
     {
@@ -140,17 +137,22 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
 
 - (NSString *)cellDetailTextForItem:(MAOfflineItem *)item
 {
+    if ([item isKindOfClass:[MAOfflineProvince class]])
+    {
+        return [NSString stringWithFormat:@"大小:%.2fM", item.size/1024/1024.00];
+    }
+    
     NSString *detailText = nil;
     
     if (![self.downloadingItems containsObject:item])
     {
         if (item.itemStatus == MAOfflineItemStatusCached)
         {
-            detailText = [NSString stringWithFormat:@"%lld/%lld", item.downloadedSize, item.size];
+            detailText = [NSString stringWithFormat:@"%.2fM/%.2fM", item.downloadedSize/1024/1024.00, item.size/1024/1024.00];
         }
         else
         {
-            detailText = [NSString stringWithFormat:@"大小:%lld", item.size];
+            detailText = [NSString stringWithFormat:@"大小:%.2fM", item.size/1024/1024.00];
         }
     }
     else
@@ -180,7 +182,7 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
                 long long recieved = [[progressDict objectForKey:MAOfflineMapDownloadReceivedSizeKey] longLongValue];
                 long long expected = [[progressDict objectForKey:MAOfflineMapDownloadExpectedSizeKey] longLongValue];
                 
-                detailText = [NSString stringWithFormat:@"%lld/%lld(%.1f%%)", recieved, expected, recieved/(float)expected*100];
+                detailText = [NSString stringWithFormat:@"%.2fM/%.2f(%.1f%%)", recieved/1024/1024.00, expected/1024/1024.00, recieved/(float)expected*100];
                 break;
             }
             case MAOfflineMapDownloadStatusCompleted:
@@ -211,7 +213,7 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
                 break;
             }
         } // end switch
-
+        
     }
     
     return detailText;
@@ -219,24 +221,97 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
 
 - (void)updateAccessoryViewForCell:(UITableViewCell *)cell item:(MAOfflineItem *)item
 {
-    UIButton *btn = (UIButton *)cell.accessoryView;
-    
-    if (item.itemStatus == MAOfflineItemStatusInstalled)
+    UIButton *delete = nil;
+    UIButton *download = nil;
+    UIButton *pause = nil;
+    for (UIButton * but in cell.accessoryView.subviews)
     {
-        btn.hidden = YES;
+        switch (but.tag)
+        {
+            case kTagDeleteButton:
+                delete = but;
+                break;
+            case kTagPauseButton:
+                pause = but;
+                break;
+            case kTagDownloadButton:
+                download = but;
+                break;
+                
+            default:
+                break;
+        }
+    }
+    
+    CGPoint right = CGPointMake(kButtonSize * (kButtonCount - 0.5), kButtonSize * 0.5);
+    CGFloat leftMove = -kButtonSize;
+    CGPoint center = right;
+    if (item.itemStatus == MAOfflineItemStatusInstalled || item.itemStatus ==MAOfflineItemStatusCached)
+    {
+        delete.hidden = NO;
+        delete.center = center;
+        center.x += leftMove;
     }
     else
     {
-        btn.hidden = NO;
+        delete.hidden = YES;
+        delete.center = right;
+    }
+    
+    if ([[MAOfflineMap sharedOfflineMap] isDownloadingForItem:item])
+    {
+        pause.hidden = NO;
+        pause.center = center;
+        center.x += leftMove;
         
-        if ([self.downloadingItems containsObject:item])
+        download.hidden = YES;
+        download.center = right;
+    }
+    else
+    {
+        pause.hidden = YES;
+        pause.center = right;
+        
+        if (item.itemStatus != MAOfflineItemStatusInstalled)
         {
-            [btn setTitle:@"暂停" forState:UIControlStateNormal];
+            download.hidden = NO;
+            download.center = center;
         }
         else
         {
-            [btn setTitle:@"下载" forState:UIControlStateNormal];
+            download.hidden = YES;
+            download.center = right;
         }
+    }
+    
+}
+
+- (void)updateUIForItem:(MAOfflineItem *)item atIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell * cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    if (cell != nil)
+    {
+        [self updateCell:cell forItem:item];
+    }
+    
+    if ([item isKindOfClass:[MAOfflineItemCommonCity class]])
+    {
+        UITableViewCell * provinceCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:indexPath.section]];
+        if (provinceCell != nil)
+        {
+            [self updateCell:provinceCell forItem:((MAOfflineItemCommonCity *)item).province];
+        }
+        return;
+    }
+    
+    if ([item isKindOfClass:[MAOfflineProvince class]])
+    {
+        MAOfflineProvince * province = (MAOfflineProvince *)item;
+        [province.cities enumerateObjectsUsingBlock:^(MAOfflineItemCommonCity * obj, NSUInteger idx, BOOL *  stop) {
+            UITableViewCell * cityCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:idx+1 inSection:indexPath.section]];
+            [self updateCell:cityCell forItem:obj];
+        }];
+        return;
     }
 }
 
@@ -258,15 +333,18 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
     
     NSLog(@"download :%@", item.name);
     
-    [self.downloadingItems addObject:item];
-    [self.downloadStages setObject:[NSMutableDictionary dictionary] forKey:item.adcode];
-    
-    [[MAOfflineMap sharedOfflineMap] downloadItem:item shouldContinueWhenAppEntersBackground:YES downloadBlock:^(MAOfflineItem *downloadItem, MAOfflineMapDownloadStatus downloadStatus, id info) {
+    [[MAOfflineMap sharedOfflineMap] downloadItem:item shouldContinueWhenAppEntersBackground:YES downloadBlock:^(MAOfflineItem * downloadItem, MAOfflineMapDownloadStatus downloadStatus, id info) {
+        
+        if (![self.downloadingItems containsObject:downloadItem])
+        {
+            [self.downloadingItems addObject:downloadItem];
+            [self.downloadStages setObject:[NSMutableDictionary dictionary] forKey:downloadItem.adcode];
+        }
         
         /* Manipulations to your application’s user interface must occur on the main thread. */
         dispatch_async(dispatch_get_main_queue(), ^{
             
-            NSMutableDictionary *stage  = [self.downloadStages objectForKey:item.adcode];
+            NSMutableDictionary *stage  = [self.downloadStages objectForKey:downloadItem.adcode];
             
             if (downloadStatus == MAOfflineMapDownloadStatusWaiting)
             {
@@ -283,19 +361,15 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
                 [stage setObject:[NSNumber numberWithBool:NO] forKey:DownloadStageIsRunningKey2];
                 
                 // clear
-                [self.downloadingItems removeObject:item];
-                [self.downloadStages removeObjectForKey:item.adcode];
+                [self.downloadingItems removeObject:downloadItem];
+                [self.downloadStages removeObjectForKey:downloadItem.adcode];
             }
             
             [stage setObject:[NSNumber numberWithInt:downloadStatus] forKey:DownloadStageStatusKey2];
             
             /* Update UI. */
-            UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-            
-            if (cell != nil)
-            {
-                [self updateCell:cell forItem:item];
-            }
+            //更新触发下载操作的item涉及到的UI
+            [self updateUIForItem:item atIndexPath:indexPath];
             
             if (downloadStatus == MAOfflineMapDownloadStatusFinished)
             {
@@ -303,7 +377,6 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
             }
         });
     }];
-    
 }
 
 - (void)pause:(MAOfflineItem *)item
@@ -313,31 +386,22 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
     [[MAOfflineMap sharedOfflineMap] pauseItem:item];
 }
 
-- (void)handleItemAtIndexPath:(NSIndexPath *)indexPath
+- (void)delete:(MAOfflineItem *)item
 {
-    MAOfflineItem *item = [self itemForIndexPath:indexPath];
+    NSLog(@"delete :%@", item.name);
     
-    if (item == nil)
-    {
-        return;
-    }
-    
-    if ([[MAOfflineMap sharedOfflineMap] isDownloadingForItem:item])
-    {
-        [self pause:item];
-    }
-    else
-    {
-        [self download:item atIndexPath:indexPath];
-    }
+    [[MAOfflineMap sharedOfflineMap] deleteItem:item];
 }
 
 - (MAOfflineItem *)itemForIndexPath:(NSIndexPath *)indexPath
 {
+    if(indexPath == nil)
+    {
+        return nil;
+    }
+    
     MAOfflineItem *item = nil;
     
-    item = self.CityArray[indexPath.row];
-    /*
     switch (indexPath.section)
     {
         case 0:
@@ -371,31 +435,52 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
             break;
         }
     }
-    */
+    
     return item;
 }
+
+- (UIButton *)buttonWithImage:(UIImage *)image tag:(NSUInteger)tag
+{
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, kButtonSize, kButtonSize)];
+    [button setImage:image forState:UIControlStateNormal];
+    button.tag = tag;
+    button.center = CGPointMake((kButtonCount - tag + 0.5) * kButtonSize, kButtonSize * 0.5);
+    
+    [button addTarget:self action:@selector(checkButtonTapped:event:) forControlEvents:UIControlEventTouchUpInside];
+    
+    return button;
+}
+
+- (UIView *)accessoryView
+{
+    UIView * accessory = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kButtonSize * kButtonCount, kButtonSize)];
+    UIButton * downloadButton = [self buttonWithImage:[self downloadImage] tag:kTagDownloadButton];
+    UIButton * pauseButton = [self buttonWithImage:[self pauseImage] tag:kTagPauseButton];
+    UIButton * deleteButton = [self buttonWithImage:[self deleteImage] tag:kTagDeleteButton];
+    
+    [accessory addSubview:downloadButton];
+    [accessory addSubview:pauseButton];
+    [accessory addSubview:deleteButton];
+    
+    return accessory;
+}
+
+
 
 #pragma mark - UITableViewDataSource
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    //return section < self.sectionTitles.count ? kSectionHeaderHeight : kTableCellHeight;
-    return 0;
+    return section < self.sectionTitles.count ? kSectionHeaderHeight : kTableCellHeight;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
-    //return self.sectionTitles.count + self.provinces.count;
+    return self.sectionTitles.count + self.provinces.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    
-    NSLog(@"[CityArray count]==%lu",(unsigned long)[self.CityArray count]);
-    return [self.CityArray count];
-    
-    /*
     NSInteger number = 0;
     
     switch (section)
@@ -424,12 +509,10 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
     }
     
     return number;
-     */
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    /*
     NSString *theTitle = nil;
     
     if (section < self.sectionTitles.count)
@@ -453,7 +536,7 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
         MAOfflineProvince *pro = self.provinces[section - self.sectionTitles.count];
         theTitle = pro.name;
         
-        MAHeaderView *headerView = [[MAHeaderView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), kTableCellHeight) expanded:_expandedSections[section]];
+        MAHeaderViewOffine *headerView = [[MAHeaderViewOffine alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.tableView.bounds), kTableCellHeight) expanded:_expandedSections[section]];
         
         headerView.section = section;
         headerView.text = theTitle;
@@ -461,8 +544,6 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
         
         return headerView;
     }
-     */
-    return nil;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -477,31 +558,58 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
         
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
-        cell.accessoryView = [self downloadButton];
+        cell.accessoryView = [self accessoryView];
     }
     
-    //MAOfflineItem *item = self.municipalities[indexPath.row];//[self itemForIndexPath:indexPath];
-    MAOfflineItem *item = self.CityArray[indexPath.row];
+    MAOfflineItem *item = [self itemForIndexPath:indexPath];
     [self updateCell:cell forItem:item];
     
     return cell;
 }
 
-//- (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    if (indexPath.section < self.sectionTitles.count)
-//    {
-//        cell.backgroundColor = [UIColor whiteColor];
-//    }
-//    else
-//    {
-//        cell.backgroundColor = [UIColor lightGrayColor];
-//    }
-//}
+- (void) tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section < self.sectionTitles.count)
+    {
+        cell.backgroundColor = [UIColor whiteColor];
+    }
+    else
+    {
+        cell.backgroundColor = [UIColor whiteColor];
+    }
+}
 
-#pragma mark - MAHeaderViewDelegate
+#pragma mark - ImageResource
+- (UIImage *)downloadImage
+{
+    if (_download == nil)
+    {
+        _download = [UIImage imageNamed:@"down"];
+    }
+    return _download;
+}
 
-- (void)headerView:(MAHeaderView *)headerView section:(NSInteger)section expanded:(BOOL)expanded{
+- (UIImage *)pauseImage
+{
+    if (_pause == nil)
+    {
+        _pause = [UIImage imageNamed:@"Pause"];
+    }
+    return _pause;
+}
+
+- (UIImage *)deleteImage
+{
+    if (_delete == nil)
+    {
+        _delete = [UIImage imageNamed:@"Deletes"];
+    }
+    return _delete;
+}
+
+#pragma mark - MAHeaderViewOffineDelegate
+
+- (void)headerView:(MAHeaderViewOffine *)headerView section:(NSInteger)section expanded:(BOOL)expanded{
     _expandedSections[section] = expanded;
     
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationNone];
@@ -513,54 +621,75 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
 {
     NSIndexPath *indexPath = [self indexPathForSender:sender event:event];
     
-    [self handleItemAtIndexPath:indexPath];
-}
-
-- (void)backAction
-{
-    [self cancelAllAction];
+    MAOfflineItem *item = [self itemForIndexPath:indexPath];
     
-    [self dismissModalViewControllerAnimated:YES];
-}
-
-- (void)clearAllAction
-{
-    [[MAOfflineMap sharedOfflineMap] clearDisk];
-    [self.tableView reloadData];
+    if (item == nil)
+    {
+        return;
+    }
     
-    NSLog(@"clear all");
+    UIButton * button = sender;
+    switch (button.tag)
+    {
+        case kTagDeleteButton:
+            [self delete:item];
+            
+            [self updateUIForItem:item atIndexPath:indexPath];
+            
+            break;
+        case kTagPauseButton:
+            [self pause:item];
+            
+            break;
+        case kTagDownloadButton:
+            [self download:item atIndexPath:indexPath];
+            break;
+            
+            
+        default:
+            break;
+    }
 }
+#pragma mark - 取消所有下载
 
 - (void)cancelAllAction
 {
     [[MAOfflineMap sharedOfflineMap] cancelAll];
-    
-    NSLog(@"pause all");
-
 }
 
-- (NSArray*)searchAction:(NSString *)code
+- (void)searchAction
 {
-    NSString *key=code;
     /* 搜索关键字支持 {城市中文名称, 拼音(不区分大小写), 拼音简写, cityCode, adCode}五种类型. */
-    //NSString *key = kDefaultSearchkey;
+    NSString *key = kDefaultSearchkey;
     
     NSArray *result = [self citiesFilterWithKey:key];
     
-    NSLog(@"key = %@, result count = %ld", key, (unsigned long)result.count);
+    NSLog(@"key = %@, result count = %d", key, (int)result.count);
     [result enumerateObjectsUsingBlock:^(MAOfflineCity *obj, NSUInteger idx, BOOL *stop) {
-        NSLog(@"idx = %ld, cityName = %@, cityCode = %@, adCode = %@, pinyin = %@, jianpin = %@, size = %lld", (unsigned long)idx, obj.name, obj.cityCode,obj.adcode, obj.pinyin, obj.jianpin, obj.size);
+        NSLog(@"idx = %d, cityName = %@, cityCode = %@, adCode = %@, pinyin = %@, jianpin = %@, size = %lld", (int)idx, obj.name, obj.cityCode,obj.adcode, obj.pinyin, obj.jianpin, obj.size);
     }];
-    return result;
 }
 
 #pragma mark - Initialization
 
 - (void)initNavigationBar
 {
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
-                                                                                          target:self
-                                                                                          action:@selector(backAction)];
+    
+    self.title = @"离线地图";
+    
+    UIView *headView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_W, 64)];
+    headView.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:headView];
+    
+    UIButton *leftBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 28, 15, 28)];
+    [leftBtn addTarget:self action:@selector(leftOnclick) forControlEvents:UIControlEventTouchUpInside];
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"common_navbar_return@2x"] forState:UIControlStateNormal];
+    [headView addSubview:leftBtn];
+    
+    UIButton *rightBtn = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_W-50, 27, 30, 30)];
+    [rightBtn addTarget:self action:@selector(cancelAllAction) forControlEvents:UIControlEventTouchUpInside];
+    [rightBtn setBackgroundImage:[UIImage imageNamed:@"Pause"] forState:UIControlStateNormal];
+    [headView addSubview:rightBtn];
     
 }
 
@@ -570,28 +699,34 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
                                                                                  target:self
                                                                                  action:nil];
     
-    UIBarButtonItem * cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"取消全部"
-                                                                    style:UIBarButtonItemStyleDone
-                                                                   target:self
-                                                                   action:@selector(cancelAllAction)];
-    cancelItem.tintColor = [UIColor whiteColor];
+    UILabel *prompts = [[UILabel alloc] init];
+    prompts.text            = [NSString stringWithFormat:@"默认关键字是\"%@\", 结果在console打印", kDefaultSearchkey];
+    //    prompts.textAlignment   = UITextAlignmentCenter;
+    prompts.textAlignment =  NSTextAlignmentCenter;
+    prompts.backgroundColor = [UIColor clearColor];
+    prompts.textColor       = [UIColor whiteColor];
+    prompts.font            = [UIFont systemFontOfSize:15];
+    [prompts sizeToFit];
     
-    UIBarButtonItem * clearItem = [[UIBarButtonItem alloc] initWithTitle:@"清空全部"
-                                                                   style:UIBarButtonItemStyleDone
-                                                                  target:self
-                                                                  action:@selector(clearAllAction)];
-    clearItem.tintColor = [UIColor whiteColor];
-    self.toolbarItems = [NSArray arrayWithObjects:flexbleItem, cancelItem, flexbleItem, clearItem,flexbleItem, nil];
-
+    UIBarButtonItem *promptsItem = [[UIBarButtonItem alloc] initWithCustomView:prompts];
+    
+    UIBarButtonItem *searchItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch
+                                                                                target:self
+                                                                                action:@selector(searchAction)];
+    
+    self.toolbarItems = [NSArray arrayWithObjects:flexbleItem, promptsItem, flexbleItem, searchItem,flexbleItem, nil];
 }
 
 - (void)initTableView
 {
-    self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
+    UILabel *line = [[UILabel alloc] initWithFrame:CGRectMake(0, 63, SCREEN_W, 1)];
+    line.backgroundColor = [UIColor grayColor];
+    [self.view addSubview:line];
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, SCREEN_W, SCREEN_H-64) style:UITableViewStylePlain];
     self.tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     self.tableView.delegate   = self;
     self.tableView.dataSource = self;
-    self.tableView.frame=CGRectMake(0, CUSTOM_NAV_HEIGHT, self.view.width, self.view.height-CUSTOM_NAV_HEIGHT);
+
     [self.view addSubview:self.tableView];
 }
 
@@ -602,7 +737,7 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
     self.cities = [MAOfflineMap sharedOfflineMap].cities;
     self.provinces = [MAOfflineMap sharedOfflineMap].provinces;
     self.municipalities = [MAOfflineMap sharedOfflineMap].municipalities;
-    NSLog(@"number====%lu",(unsigned long)[self.municipalities count]);
+    
     self.downloadingItems = [NSMutableSet set];
     self.downloadStages = [NSMutableDictionary dictionary];
     
@@ -617,10 +752,10 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
     memset(_expandedSections, 0, (self.sectionTitles.count + self.provinces.count) * sizeof(char));
     
 }
-
+#pragma mark - 头标题：离线数据版本号
 - (void)setupTitle
 {
-    self.navigationItem.title = [MAOfflineMap sharedOfflineMap].version;
+    self.navigationItem.title = [MAOfflineMap sharedOfflineMap].version;// 离线数据版本号
 }
 
 - (void)setupPredicate
@@ -639,11 +774,9 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
         
         [self setupPredicate];
         
-        //[self setupTitle];
+        [self setupTitle];
         
         [self checkNewestVersionAction];
-        _CityArray=[[NSArray alloc] init];
-        
     }
     
     return self;
@@ -659,66 +792,30 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
 {
     [super viewDidLoad];
     
-    self.view.backgroundColor=[UIColor whiteColor];
-    
-    
-    self.view.backgroundColor=[UIColor whiteColor];
-    self.backLabel.text=@"离线地图 ";
-    self.backLabel.textColor=Textwhite_COLOR;
-    self.line.backgroundColor=[UIColor clearColor];
-    [self.backButton addTarget:self action:@selector(BackMainView1) forControlEvents:UIControlEventTouchUpInside];
-    
-    
-    
-    
-    //[self initNavigationBar];
+    [self initNavigationBar];
     
     [self initTableView];
     
     //[self initToolBar];
-    _flag=0;
-   
 }
-
--(void)BackMainView1
-{
-    [self.navigationController popViewControllerAnimated:YES];
-    
-}
-
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
-//    self.navigationController.navigationBar.barStyle    = UIBarStyleBlack;
-//    self.navigationController.navigationBar.translucent = NO;
-//    
-//    self.navigationController.toolbar.barStyle      = UIBarStyleBlack;
-//    self.navigationController.toolbar.translucent   = NO;
-//    [self.navigationController setToolbarHidden:NO animated:animated];
+//    [self changeNavigation];
     
+  
     
-    // [self.tableView reloadData];
-    
-    [self getdata];
 }
 
--(void)getdata
-{
-
-    QiFacade*       facade;
-    facade=[QiFacade sharedInstance];
-    _flag=[facade getCitysLIst];
-    [facade addHttpObserver:self tag:_flag];
-    [self showLoadingWithText:@"加载中..."];
-
+-(void)leftOnclick{
+        [self.navigationController popToRootViewControllerAnimated:YES];
 }
-
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    [super viewWillDisappear:animated];
+    [super viewDidAppear:animated];
     
     if (self.needReloadWhenDisappear)
     {
@@ -726,11 +823,12 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
         
         self.needReloadWhenDisappear = NO;
     }
+    
 }
 
 @end
 
-@implementation OfflineDetailViewController (SearchCity)
+@implementation OfflineDetailVC (SearchCity)
 
 /* Returns a new array consisted of MAOfflineCity object for which match the key. */
 - (NSArray *)citiesFilterWithKey:(NSString *)key
@@ -744,63 +842,5 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
     
     return [self.cities filteredArrayUsingPredicate:keyPredicate];
 }
-
-#pragma mark  加载
-
-
-#pragma 网络处理
-
-- (void)requestFinished:(NSDictionary*)response tag:(NSInteger)iRequestTag
-{
-    [self dismissLoading];
-    NSLog(@"成功 /n%@",response);
-    if(_flag!=0&&_flag==iRequestTag)
-    {
-        NSMutableArray *mutableArray=[[NSMutableArray alloc]init];
-        NSArray *array=[response objectForKey:@"data"];
-        for(NSDictionary *dic in array)
-        {
-            NSString *code=[dic objectForKey:@"code"];
-            NSString *city=[dic objectForKey:@"city"];
-            city= [city stringByReplacingOccurrencesOfString:@"市" withString:@""];
-            NSArray *searchArray=[[self searchAction:city] mutableCopy];
-            for(MAOfflineItem *item in searchArray)
-            {
-                if([city isEqualToString:item.name])
-                {
-                    MAOfflineItem *item2=[[MAOfflineItem alloc]init];
-                    item2=item;
-                    [mutableArray addObject:item2];
-                    NSLog(@"item==%u",item.itemStatus);
-                    break;
-                }
-            
-            }
-        }
-        
-        _CityArray=mutableArray;
-        [_tableView reloadData];
-    }
-}
-
-
-- (void)requestFailed:(NSDictionary*)response tag:(NSInteger)iRequestTag
-{
-    [self dismissLoading];
-    NSString *Message=[response objectForKey:@"message"];
-    if(Message!=nil)
-    {
-        NSLog(@"Message==%@",Message);
-    }
-    
-    
-    
-    NSLog(@"失败 /n%@",response);
-    
-}
-
-
-
-
 
 @end

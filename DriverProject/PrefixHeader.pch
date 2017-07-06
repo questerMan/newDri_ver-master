@@ -34,6 +34,9 @@
 
     #import "CCBBaseViewController.h"
 
+    #import <MAMapKit/MAMapKit.h>
+
+
 static NSInteger flages = 0;//(0:其他页面  1:ViewController页面  2:DetailsViewController页面)
 
 #ifndef __OPTIMIZE__

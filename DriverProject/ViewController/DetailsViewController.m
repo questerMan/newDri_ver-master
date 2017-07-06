@@ -116,7 +116,6 @@
     [_ConfirmButton setImage:[UIImage imageNamed:@"ic_chevron_right_white.png"] forState:UIControlStateNormal];
     [self.view addSubview:_ConfirmButton];
     
-    
     [self.backview.ConfirmButton addTarget:self action:@selector(goTo) forControlEvents:UIControlEventTouchUpInside];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(OrderProcessNewsSender:) name:@"OrderProcessNews" object:nil];
