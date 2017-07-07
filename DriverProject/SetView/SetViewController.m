@@ -8,7 +8,7 @@
 
 #import "SetViewController.h"
 #import "SetCell.h"
-#import "OfflineDetailViewController.h"
+#import "OfflineDetailVC.h"
 #import "MyMessage.h"
 #define  LEFT_SPACING   20
 #define  RINGT_SPACING   20
@@ -244,7 +244,7 @@
     if(indexPath.row==0)
     {
         AppDelegate *delegate=(AppDelegate *)[[UIApplication sharedApplication] delegate];
-        OfflineDetailViewController *ViewVc=[[OfflineDetailViewController alloc] init];
+        OfflineDetailVC *ViewVc=[[OfflineDetailVC alloc] init];
         [delegate.mainViewNav pushViewController:ViewVc animated:YES];
     }
 }

@@ -21,7 +21,9 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>2</string>
+	<string>6</string>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -30,15 +32,15 @@
 		<true/>
 	</dict>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>请开启定位服务权限，以便获取更优质的服务</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>请开启定位服务权限，以便获取更优质的服务</string>
+	<string>请允许在未打开软件时始终访问您的位置，以保证提供更好的客户服务，让最近的司机提供服务，减少乘客的等待时间</string>
+	<key>NSLocationUsageDescription</key>
+	<string>请允许使用定位，以保证提供更好的客户服务，让最近的司机提供服务，减少乘客的等待时间</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
 	</array>
 	<key>UIFileSharingEnabled</key>
-	<true/>
+	<false/>
 	<key>UILaunchStoryboardName</key>
 	<string>Launch Screen</string>
 	<key>UIRequiredDeviceCapabilities</key>

@@ -32,7 +32,7 @@
 
 -(void)setUI
 {
-    _settableView = [[UITableView alloc] initWithFrame:FRAME(0, 100,self.frame.size.width, 264) style:UITableViewStylePlain];
+    _settableView = [[UITableView alloc] initWithFrame:FRAME(0, 100,self.frame.size.width, 180) style:UITableViewStylePlain];
     _settableView.delegate = self;
     _settableView.dataSource = self;
     _settableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
@@ -61,7 +61,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 
 {
-    NSInteger intergerNum=6;
+    NSInteger intergerNum=4;
     
     
     
@@ -93,19 +93,19 @@
             sectionCell.setimage.image=[UIImage imageNamed:@"ic_notifications_lightgray_24dp.png"];
             sectionCell.setlable.text=@"消息通知";
             break;
+//        case 2:
+//            sectionCell.setimage.image=[UIImage imageNamed:@"ic_whatshot_lightgray_24dp.png"];
+//            sectionCell.setlable.text=@"出行热点";
+//            break;
+//        case 3:
+//            sectionCell.setimage.image=[UIImage imageNamed:@"ic_explore_lightgray_24dp.png"];
+//            sectionCell.setlable.text=@"司机指南";
+//            break;
         case 2:
-            sectionCell.setimage.image=[UIImage imageNamed:@"ic_whatshot_lightgray_24dp.png"];
-            sectionCell.setlable.text=@"出行热点";
-            break;
-        case 3:
-            sectionCell.setimage.image=[UIImage imageNamed:@"ic_explore_lightgray_24dp.png"];
-            sectionCell.setlable.text=@"司机指南";
-            break;
-        case 4:
             sectionCell.setimage.image=[UIImage imageNamed:@"ic_settings_lightgray_24dp.png"];
             sectionCell.setlable.text=@"设置";
             break;
-        case 5:
+        case 3:
             sectionCell.setimage.image=[UIImage imageNamed:@"ic_call_green_24dp.png"];
             sectionCell.setlable.text=@"服务总台热线";
             sectionCell.setlable.textColor =Main_COLOR;
@@ -169,22 +169,25 @@
     
     if(indexPath.row==2)
     {
-        
         AppDelegate *delegate=(AppDelegate *)[[UIApplication sharedApplication] delegate];
-        TourismVC  *tourismVC=[[TourismVC alloc] init];
-        tourismVC.titlelable=@"出行热点";
-        tourismVC.urlString=@"www.gaclixin.com/help/madian.html";
-        [delegate.mainViewNav pushViewController:tourismVC animated:YES];
+        SetViewController  *setViewController=[[SetViewController alloc] init];
+        setViewController.titlestring=@"设置";
+        [delegate.mainViewNav pushViewController:setViewController animated:YES];//        AppDelegate *delegate=(AppDelegate *)[[UIApplication sharedApplication] delegate];
+//        TourismVC  *tourismVC=[[TourismVC alloc] init];
+//        tourismVC.titlelable=@"出行热点";
+//        tourismVC.urlString=@"www.gaclixin.com/help/madian.html";
+//        [delegate.mainViewNav pushViewController:tourismVC animated:YES];
         
     }
     if(indexPath.row==3)
     {
-        
-        AppDelegate *delegate=(AppDelegate *)[[UIApplication sharedApplication] delegate];
-        TourismVC  *tourismVC=[[TourismVC alloc] init];
-        tourismVC.titlelable=@"司机指南";
-        tourismVC.urlString=@"www.gaclixin.com/help/driver_manual.html";
-        [delegate.mainViewNav pushViewController:tourismVC animated:YES];
+        [self telephone:@"4008228846"];
+
+//        AppDelegate *delegate=(AppDelegate *)[[UIApplication sharedApplication] delegate];
+//        TourismVC  *tourismVC=[[TourismVC alloc] init];
+//        tourismVC.titlelable=@"司机指南";
+//        tourismVC.urlString=@"www.gaclixin.com/help/driver_manual.html";
+//        [delegate.mainViewNav pushViewController:tourismVC animated:YES];
         
     }
     if(indexPath.row==4)

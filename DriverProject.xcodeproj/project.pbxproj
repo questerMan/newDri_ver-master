@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4643F1C71BC683520004D1E4 /* OfflineDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4643F1C61BC683520004D1E4 /* OfflineDetailViewController.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		4643F1CA1BC686590004D1E4 /* MAHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4643F1C91BC686590004D1E4 /* MAHeaderView.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		467996A01BB3F0FD008A6BE1 /* FETableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4679969F1BB3F0FD008A6BE1 /* FETableViewCell.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		467996A31BB3F1B5008A6BE1 /* SetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 467996A21BB3F1B5008A6BE1 /* SetViewController.m */; };
@@ -43,6 +42,8 @@
 		46D40EF81BB5442F009A3893 /* ForgetPasswordVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D40EF71BB5442F009A3893 /* ForgetPasswordVC.m */; };
 		46D473871BB9618B00F2ADA6 /* TourismVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D473861BB9618B00F2ADA6 /* TourismVC.m */; };
 		8211406B1EE69FB200EEB7AC /* 4082.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8211406A1EE69FB200EEB7AC /* 4082.wav */; };
+		8212503D1F0E3053005FFBDB /* MAHeaderViewOffine.m in Sources */ = {isa = PBXBuildFile; fileRef = 821250391F0E2FCF005FFBDB /* MAHeaderViewOffine.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		8212503E1F0E3062005FFBDB /* OfflineDetailVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8212503C1F0E2FCF005FFBDB /* OfflineDetailVC.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		821C919B1F073C4600603ADB /* AMapFoundationKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 821C91961F073C4600603ADB /* AMapFoundationKit.framework */; };
 		821C919C1F073C4600603ADB /* AMapLocationKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 821C91971F073C4600603ADB /* AMapLocationKit.framework */; };
 		821C919D1F073C4600603ADB /* AMapNaviKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 821C91981F073C4600603ADB /* AMapNaviKit.framework */; };
@@ -288,8 +289,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		4643F1C51BC6834E0004D1E4 /* OfflineDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OfflineDetailViewController.h; sourceTree = "<group>"; };
-		4643F1C61BC683520004D1E4 /* OfflineDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OfflineDetailViewController.m; sourceTree = "<group>"; };
 		4643F1C81BC686590004D1E4 /* MAHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAHeaderView.h; sourceTree = "<group>"; };
 		4643F1C91BC686590004D1E4 /* MAHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAHeaderView.m; sourceTree = "<group>"; };
 		4679969E1BB3F0FD008A6BE1 /* FETableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FETableViewCell.h; sourceTree = "<group>"; };
@@ -350,6 +349,10 @@
 		46D473851BB9618B00F2ADA6 /* TourismVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TourismVC.h; sourceTree = "<group>"; };
 		46D473861BB9618B00F2ADA6 /* TourismVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TourismVC.m; sourceTree = "<group>"; };
 		8211406A1EE69FB200EEB7AC /* 4082.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = 4082.wav; sourceTree = "<group>"; };
+		821250381F0E2FCF005FFBDB /* MAHeaderViewOffine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MAHeaderViewOffine.h; sourceTree = "<group>"; };
+		821250391F0E2FCF005FFBDB /* MAHeaderViewOffine.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MAHeaderViewOffine.m; sourceTree = "<group>"; };
+		8212503B1F0E2FCF005FFBDB /* OfflineDetailVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OfflineDetailVC.h; sourceTree = "<group>"; };
+		8212503C1F0E2FCF005FFBDB /* OfflineDetailVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OfflineDetailVC.m; sourceTree = "<group>"; };
 		821C91961F073C4600603ADB /* AMapFoundationKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AMapFoundationKit.framework; sourceTree = "<group>"; };
 		821C91971F073C4600603ADB /* AMapLocationKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AMapLocationKit.framework; sourceTree = "<group>"; };
 		821C91981F073C4600603ADB /* AMapNaviKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AMapNaviKit.framework; sourceTree = "<group>"; };
@@ -822,6 +825,33 @@
 			path = loginImage;
 			sourceTree = "<group>";
 		};
+		821250361F0E2FCF005FFBDB /* DownloadMapVC */ = {
+			isa = PBXGroup;
+			children = (
+				821250371F0E2FCF005FFBDB /* View */,
+				8212503A1F0E2FCF005FFBDB /* ViewController */,
+			);
+			path = DownloadMapVC;
+			sourceTree = "<group>";
+		};
+		821250371F0E2FCF005FFBDB /* View */ = {
+			isa = PBXGroup;
+			children = (
+				821250381F0E2FCF005FFBDB /* MAHeaderViewOffine.h */,
+				821250391F0E2FCF005FFBDB /* MAHeaderViewOffine.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		8212503A1F0E2FCF005FFBDB /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				8212503B1F0E2FCF005FFBDB /* OfflineDetailVC.h */,
+				8212503C1F0E2FCF005FFBDB /* OfflineDetailVC.m */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
 		821C91901F07390F00603ADB /* ThirdLibrary */ = {
 			isa = PBXGroup;
 			children = (
@@ -1243,8 +1273,7 @@
 		B34B4F901BAE7BF3002FEED5 /* SetView */ = {
 			isa = PBXGroup;
 			children = (
-				4643F1C51BC6834E0004D1E4 /* OfflineDetailViewController.h */,
-				4643F1C61BC683520004D1E4 /* OfflineDetailViewController.m */,
+				821250361F0E2FCF005FFBDB /* DownloadMapVC */,
 				B39835FF1BAED8440071F391 /* DriverScoreVC.h */,
 				B39836001BAED8440071F391 /* DriverScoreVC.m */,
 				469141661BAFD9D80098B60B /* DriverScoreCell.h */,
@@ -1538,9 +1567,9 @@
 			children = (
 				B3C6DD4E1BBD505D00249EFA /* CCBWindow.h */,
 				B3C6DD4F1BBD505D00249EFA /* CCBWindow.m */,
+				B34B4F911BAE7CCA002FEED5 /* BaseSetViewController.h */,
 				B3C6DD4B1BBD3ABA00249EFA /* BaseAlertView.h */,
 				B3C6DD4C1BBD3ABA00249EFA /* BaseAlertView.m */,
-				B34B4F911BAE7CCA002FEED5 /* BaseSetViewController.h */,
 				B34B4F921BAE7CCA002FEED5 /* BaseSetViewController.m */,
 				B33FDBD11B9C5B3F00D75343 /* BaseViewController.h */,
 				B33FDBD21B9C5B3F00D75343 /* BaseViewController.m */,
@@ -1835,6 +1864,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8212503E1F0E3062005FFBDB /* OfflineDetailVC.m in Sources */,
+				8212503D1F0E3053005FFBDB /* MAHeaderViewOffine.m in Sources */,
 				469141771BB03C1D0098B60B /* MReminderCell.m in Sources */,
 				B3224A951B983DB300696D66 /* ASIDataCompressor.m in Sources */,
 				46D40EF81BB5442F009A3893 /* ForgetPasswordVC.m in Sources */,
@@ -1930,7 +1961,6 @@
 				B3224A9B1B983DB300696D66 /* ASINetworkQueue.m in Sources */,
 				82CF639F1F07B25400D09A5E /* AFSecurityPolicy.m in Sources */,
 				B3224A961B983DB300696D66 /* ASIDataDecompressor.m in Sources */,
-				4643F1C71BC683520004D1E4 /* OfflineDetailViewController.m in Sources */,
 				B3224AFE1B98512900696D66 /* NSString+json.m in Sources */,
 				4643F1CA1BC686590004D1E4 /* MAHeaderView.m in Sources */,
 				B3224B001B98512900696D66 /* NSString+Qi.m in Sources */,
