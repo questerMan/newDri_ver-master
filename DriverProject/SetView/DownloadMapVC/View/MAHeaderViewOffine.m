@@ -90,7 +90,7 @@
 /* 初始化图标. */
 - (void)setupExpandImageView
 {
-    self.expandImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"right"] highlightedImage:[UIImage imageNamed:@"Bottom"]];
+    self.expandImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"right"] highlightedImage:[UIImage imageNamed:@"bottom "]];
     
     self.expandImageView.center = CGPointMake(MAHeaderViewMargin + CGRectGetWidth(self.expandImageView.bounds) / 2.f, CGRectGetMidY(self.bounds));
     

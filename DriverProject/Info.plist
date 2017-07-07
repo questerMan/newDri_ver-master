@@ -21,7 +21,9 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>5</string>
+	<string>6</string>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -30,9 +32,9 @@
 		<true/>
 	</dict>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>以便于"丽新出行司机"为您的出行提供给更多服务</string>
+	<string>请允许在未打开软件时始终访问您的位置，以保证提供更好的客户服务，让最近的司机提供服务，减少乘客的等待时间</string>
 	<key>NSLocationUsageDescription</key>
-	<string>请允许丽新出行司机访问位置，以便更好为您服务</string>
+	<string>请允许使用定位，以保证提供更好的客户服务，让最近的司机提供服务，减少乘客的等待时间</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>

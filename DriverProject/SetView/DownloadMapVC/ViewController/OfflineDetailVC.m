@@ -593,7 +593,7 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
 {
     if (_pause == nil)
     {
-        _pause = [UIImage imageNamed:@"Pause"];
+        _pause = [UIImage imageNamed:@"pause"];
     }
     return _pause;
 }
@@ -602,7 +602,7 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
 {
     if (_delete == nil)
     {
-        _delete = [UIImage imageNamed:@"Deletes"];
+        _delete = [UIImage imageNamed:@"delete"];
     }
     return _delete;
 }
@@ -681,14 +681,14 @@ NSString const *DownloadStageInfoKey2      = @"DownloadStageInfoKey";
     headView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:headView];
     
-    UIButton *leftBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 28, 15, 28)];
+    UIButton *leftBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 30, 24, 24)];
     [leftBtn addTarget:self action:@selector(leftOnclick) forControlEvents:UIControlEventTouchUpInside];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"common_navbar_return@2x"] forState:UIControlStateNormal];
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"return"] forState:UIControlStateNormal];
     [headView addSubview:leftBtn];
     
     UIButton *rightBtn = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_W-50, 27, 30, 30)];
     [rightBtn addTarget:self action:@selector(cancelAllAction) forControlEvents:UIControlEventTouchUpInside];
-    [rightBtn setBackgroundImage:[UIImage imageNamed:@"Pause"] forState:UIControlStateNormal];
+    [rightBtn setBackgroundImage:[UIImage imageNamed:@"pause"] forState:UIControlStateNormal];
     [headView addSubview:rightBtn];
     
 }

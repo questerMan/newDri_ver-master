@@ -115,7 +115,7 @@
         make.left.offset(MATCHSIZE(84));
         make.top.equalTo(_userNameField.mas_bottom).offset(MATCHSIZE(50));
         make.height.offset(MATCHSIZE(30));
-        make.width.offset(MATCHSIZE(230));
+        make.width.offset(MATCHSIZE(270));
     }];
 }
 
